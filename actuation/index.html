@@ -15,10 +15,10 @@
         <link rel="canonical" href="https://ghx981209.github.io/hand-manual/actuation/index.html">
       
       
-        <link rel="prev" href="../spec/index.html">
+        <link rel="prev" href="../usage/index.html">
       
       
-        <link rel="next" href="../usage/index.html">
+        <link rel="next" href="../safety/index.html">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>驱动与传感原理 - 五指灵巧手 · 用户手册</title>
+        <title>驱动与控制 - 五指灵巧手 · 用户手册</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#_1" class="md-skip">
+        <a href="#3-lp-dxs" class="md-skip">
           跳转至
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              驱动与传感原理
+              驱动与控制
             
           </span>
         </div>
@@ -238,7 +238,26 @@
   
     
   
-  产品规格与结构
+  产品规格
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../usage/index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  接口与使用
 
       </a>
     </li>
@@ -259,26 +278,7 @@
   
     
   
-  驱动与传感原理
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../usage/index.html" class="md-tabs__link">
-        
-  
-  
-    
-  
-  接口与使用
+  驱动与控制
 
       </a>
     </li>
@@ -380,7 +380,34 @@
   <span class="md-ellipsis">
     
   
-    产品规格与结构
+    产品规格
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    接口与使用
   
 
     
@@ -416,7 +443,7 @@
   <span class="md-ellipsis">
     
   
-    驱动与传感原理
+    驱动与控制
   
 
     
@@ -434,7 +461,7 @@
   <span class="md-ellipsis">
     
   
-    驱动与传感原理
+    驱动与控制
   
 
     
@@ -460,10 +487,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1" class="md-nav__link">
+  <a href="#31-canfd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. 电缸驱动
+        3.1 CANFD 通信接口说明
       
     </span>
   </a>
@@ -471,32 +498,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2" class="md-nav__link">
+  <a href="#32-ros2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. 压力传感（推杆轴向力）
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. 编码器
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. 关节与连杆传动（四杆机构）
+        3.2 ROS2 示例工程说明
       
     </span>
   </a>
@@ -507,33 +512,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../usage/index.html" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    接口与使用
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -582,55 +560,18 @@
 
 
 
-<h1 id="_1">驱动与传感原理的原理</h1>
-<div class="admonition warning">
-<p class="admonition-title">骨架章节</p>
-<p>本页为原理框架，具体数值与示意图待补充。</p>
-</div>
-<h2 id="1">1. 电缸驱动</h2>
-<ul>
-<li>每个自由度由电缸（线性执行器）驱动，经四杆 / 多杆连杆机构转化为关节转角。</li>
-<li>推杆位移 → 连杆 → 关节的<strong>运动学与力映射</strong>可解析建模，正/逆运动学见技术文档。</li>
-</ul>
-<h2 id="2">2. 压力传感（推杆轴向力）</h2>
-<ul>
-<li>推杆上安装压力传感器，测量<strong>电缸轴向推力</strong> → 反映关节/接触力矩。</li>
-<li>用途：<strong>接触检测</strong>（力超阈值）、<strong>力控</strong>（电机力受供电电流限制）、无视觉感知下推断"手指是否接触物体"。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>检测量</td>
-<td>推杆轴向推力</td>
-</tr>
-<tr>
-<td>采样</td>
-<td>各电缸独立读出</td>
-</tr>
-</tbody>
-</table>
-<h2 id="3">3. 编码器</h2>
-<ul>
-<li>每自由度配编码器用于获知关节角度，作为闭环控制与运动学计算的输入。分辨率/类型待补。</li>
-</ul>
-<h2 id="4">4. 关节与连杆传动（四杆机构）</h2>
-<ul>
-<li>电缸平移带动四杆，输出关节回转；通过不同长度的连杆/不同的铰接实现每指的屈曲。</li>
-</ul>
-<div class="admonition todo">
-<p class="admonition-title">待补充</p>
-<ul>
-<li>电缸推杆力 → 关节力矩的解析式</li>
-<li>摩擦 / 迟滞补偿方法</li>
-<li>机构示意图、力传感标定曲线</li>
-<li>供电电流与最大出力的关系（2.5 A 对应的力上限）</li>
-</ul>
+<h1 id="3-lp-dxs">3. LP-DX(S) 驱动与控制</h1>
+<h2 id="31-canfd">3.1 CANFD 通信接口说明</h2>
+<blockquote>
+<p>✏️ <em>（本小节待补充：CANFD 帧格式、指令定义、示例时序等，后续按 SDK/通信协议填写。）</em></p>
+</blockquote>
+<h2 id="32-ros2">3.2 ROS2 示例工程说明</h2>
+<blockquote>
+<p>✏️ <em>（本小节待补充：ROS2 示例工程的安装、话题/服务接口、收发示例与 Demo 说明，后续按 SDK 填写。）</em></p>
+</blockquote>
+<div class="admonition tip">
+<p class="admonition-title">占位提示</p>
+<p>本节需要你的 CANFD 协议与 ROS2 SDK 资料后进行填充，当前保留标题与结构。如果你希望我把内容再分成更细的小标题（如「启动流程」「消息格式」「示例代码」），告诉我即可。</p>
 </div>
 
 
