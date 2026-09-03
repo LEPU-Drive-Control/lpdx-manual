@@ -12,13 +12,11 @@
         <meta name="author" content="郭贺骁">
       
       
-        <link rel="canonical" href="https://ghx981209.github.io/hand-manual/usage/index.html">
+        <link rel="canonical" href="https://ghx981209.github.io/hand-manual/downcen/index.html">
       
       
-        <link rel="prev" href="../spec/index.html">
+        <link rel="prev" href="../safety/index.html">
       
-      
-        <link rel="next" href="../actuation/index.html">
       
       
         
@@ -29,7 +27,7 @@
     
     
       
-        <title>接口与使用 - LP-DX(S) 系列灵巧手用户手册</title>
+        <title>下载中心 - LP-DX(S) 系列灵巧手用户手册</title>
       
     
     
@@ -80,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2-lp-dxs" class="md-skip">
+        <a href="#5-lp-dxs" class="md-skip">
           跳转至
         </a>
       
@@ -114,7 +112,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              接口与使用
+              下载中心
             
           </span>
         </div>
@@ -249,11 +247,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="index.html" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../usage/index.html" class="md-tabs__link">
         
   
   
@@ -308,9 +304,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../downcen/index.html" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="index.html" class="md-tabs__link">
         
   
   
@@ -416,37 +414,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    接口与使用
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="index.html" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../usage/index.html" class="md-nav__link">
         
   
   
@@ -462,37 +433,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="目录">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      目录
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pin" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        PIN 定义
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -555,10 +495,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../downcen/index.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    下载中心
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
         
   
   
@@ -574,6 +541,48 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#51-ros2canfdsdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 ROS2环境下CANFD转接器SDK
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#52-ros2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 ROS2 示例工程说明
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -595,55 +604,9 @@
 
 
 
-<h1 id="2-lp-dxs">2. LP-DX(S) 接口与使用</h1>
-<p><img alt="接口图片" src="%E6%8E%A5%E5%8F%A3%E5%9B%BE%E7%89%87.png" /></p>
-<h2 id="pin">PIN 定义</h2>
-<table>
-<thead>
-<tr>
-<th>PIN 号</th>
-<th>EtherCAT 线序定义</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>①</td>
-<td>VDC</td>
-</tr>
-<tr>
-<td>②</td>
-<td>GND</td>
-</tr>
-<tr>
-<td>③</td>
-<td>EtherCAT RX+</td>
-</tr>
-<tr>
-<td>④</td>
-<td>EtherCAT RX-</td>
-</tr>
-<tr>
-<td>⑤</td>
-<td>EtherCAT TX+</td>
-</tr>
-<tr>
-<td>⑥</td>
-<td>EtherCAT TX-</td>
-</tr>
-<tr>
-<td>⑦</td>
-<td>CANH</td>
-</tr>
-<tr>
-<td>⑧</td>
-<td>CANL</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition warning">
-<p class="admonition-title">供电安全</p>
-<p>工作电压 12~24 V、最大电流 2.5 A。供电前请确认电压在允许范围、极性正确；不得超过规格电流，避免持续堵转导致过热。接线前请断电。</p>
-</div>
+<h1 id="5-lp-dxs">5. LP-DX(S) 下载中心</h1>
+<h2 id="51-ros2canfdsdk">5.1 ROS2环境下CANFD转接器SDK</h2>
+<h2 id="52-ros2">5.2 ROS2 示例工程说明</h2>
 
 
 

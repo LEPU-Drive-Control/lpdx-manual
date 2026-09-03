@@ -9,7 +9,7 @@
         <meta name="description" content="五指灵巧手（10 自由度 · 电缸推杆力传感）用户手册">
       
       
-        <meta name="author" content="课题组">
+        <meta name="author" content="郭贺骁">
       
       
         <link rel="canonical" href="https://ghx981209.github.io/hand-manual/actuation/index.html">
@@ -304,6 +304,25 @@
   
 
       
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../downcen/index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  下载中心
+
+      </a>
+    </li>
+  
+
+      
     </ul>
   </div>
 </nav>
@@ -495,6 +514,111 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="3.1 CANFD 通信接口说明">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.1 通信特征
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.2 帧类型速览
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313-6-l" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.3 常用指令帧格式（6 轴，字节小端 L）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314-dh116" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.4 读取类指令（DH116 系列）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#315" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.5 传感器读取（按驱动型号）
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#316-sdo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.6 SDO 对象字典读写
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#317" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.7 常用示例指令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#318" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.8 手势定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#319" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.9 错误码定义（节选）
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -505,6 +629,56 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="3.2 ROS2 示例工程说明">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#321" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.1 编译环境
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#322" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.2 示例项目结构
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#323" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.3 编译步骤
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#324" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2.4 运行示例
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -543,6 +717,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../downcen/index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    下载中心
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -562,17 +763,487 @@
 
 <h1 id="3-lp-dxs">3. LP-DX(S) 驱动与控制</h1>
 <h2 id="31-canfd">3.1 CANFD 通信接口说明</h2>
+<h3 id="311">3.1.1 通信特征</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>仲裁段速率</td>
+<td>1 Mbps（80% 采样点）</td>
+</tr>
+<tr>
+<td>数据段速率</td>
+<td>5 Mbps（75% 采样点）</td>
+</tr>
+<tr>
+<td>最大数据段帧长</td>
+<td>64 字节</td>
+</tr>
+<tr>
+<td>校验方式</td>
+<td>硬件内置校验，无需软件实现</td>
+</tr>
+</tbody>
+</table>
+<h3 id="312">3.1.2 帧类型速览</h3>
+<table>
+<thead>
+<tr>
+<th>帧类型(字节1)</th>
+<th>含义</th>
+<th>COB-ID（请求）</th>
+<th>COB-ID（返回）</th>
+<th>数据段说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00</td>
+<td>实况返回配置帧</td>
+<td>0x500+nodeID</td>
+<td>—</td>
+<td>配置实时返回帧</td>
+</tr>
+<tr>
+<td>0x81</td>
+<td>模式与控制</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴模式+控制</td>
+</tr>
+<tr>
+<td>0x82</td>
+<td>发送所有轴位置</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴位置</td>
+</tr>
+<tr>
+<td>0x83</td>
+<td>发送所有轴速度</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴速度</td>
+</tr>
+<tr>
+<td>0x84</td>
+<td>发送所有轴电流</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴电流</td>
+</tr>
+<tr>
+<td>0x85</td>
+<td>位置+速度</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴×（位置+速度）</td>
+</tr>
+<tr>
+<td>0x87</td>
+<td>位置+电流</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴×（位置+电流）</td>
+</tr>
+<tr>
+<td>0x89</td>
+<td>速度+电流</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴×（速度+电流）</td>
+</tr>
+<tr>
+<td>0x8B</td>
+<td>位置+速度+电流</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴×（位置+速度+电流）</td>
+</tr>
+<tr>
+<td>0xA0</td>
+<td>手势运动</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>手势编号+速度+电流</td>
+</tr>
+<tr>
+<td>0xDA</td>
+<td>读所有轴状态+状态2</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴状态</td>
+</tr>
+<tr>
+<td>0xDB</td>
+<td>读位置+速度+电流+状态</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴反馈+状态+错误码</td>
+</tr>
+<tr>
+<td>0xDC</td>
+<td>读位置+速度+转矩+状态</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>6 轴反馈+状态+错误码</td>
+</tr>
+<tr>
+<td>0xF0</td>
+<td>读五指传感器信息（DH116S）</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>五指各12 触点压力</td>
+</tr>
+<tr>
+<td>0xF1</td>
+<td>读掌心传感器信息（DH116S）</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>掌心 36 触点压力</td>
+</tr>
+<tr>
+<td>0xF2</td>
+<td>读大拇指+食指传感器（DH116）</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>每指 30B</td>
+</tr>
+<tr>
+<td>0xF3</td>
+<td>读中指+无名指传感器（DH116）</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>每指 30B</td>
+</tr>
+<tr>
+<td>0xF4</td>
+<td>读小拇指+掌心传感器（DH116）</td>
+<td>0x500+nodeID</td>
+<td>0x480+nodeID</td>
+<td>手指+掌心 30B</td>
+</tr>
+</tbody>
+</table>
+<p><strong>说明</strong>：发送帧字节2 若设为有效轴数，则按上表固定返回帧；若字节2 配置为返回帧类型（如 0xDB），则返回帧按该类型。send 帧通用：字节1＝帧类型（<code>0xT0 | 0x80</code>），字节2＝有效轴数（默认6 ∕ 0xDB 指返回帧）。</p>
+<h3 id="313-6-l">3.1.3 常用指令帧格式（6 轴，字节小端 L）</h3>
+<p>所有“控制类”发送帧的公共骨架：字节1＝帧类型；字节2＝有效轴数（6，或配置为返回帧类型 0xDB）。</p>
+<p><strong>帧类型 0x81 — 模式与控制（0x01 | 0x80）</strong>
+- 字节1：0x81（帧类型）
+- 字节2：6（有效轴数）
+- 字节3‑4：Axis1 模式 + 控制
+- 字节5‑6：Axis2 模式 + 控制
+- …… 依次每轴 2 字节，共 6 轴
+- 字节13‑14：Axis6 模式 + 控制</p>
+<p><strong>帧类型 0x82 — 发送所有轴位置（0x02 | 0x80）</strong>
+- 字节1‑2：0x82 / 有效轴数
+- 字节3‑4：Axis1 位置（L/H），单位 1/总行程系数，默认总行程系数＝10000
+- 字节5‑12：Axis2…Axis5 位置（各 2 字节）
+- 字节13‑14：Axis6 位置</p>
+<p><strong>帧类型 0x83 — 发送所有轴速度（0x03 | 0x80）</strong>
+- 字节3‑4：Axis1 速度（L/H），单位 10/总行程系数/s
+- 字节5‑12：Axis2…Axis5 速度（各 2 字节）
+- 字节13‑14：Axis6 速度</p>
+<p><strong>帧类型 0x84 — 发送所有轴电流（0x04 | 0x80）</strong>
+- 字节3‑4：Axis1 电流（L/H），单位 ‰，范围 0～3000
+- …… Axis2…6 电流（各 2 字节，至字节13‑14）</p>
+<p><strong>帧类型 0x85 / 0x87 / 0x89 — 复合指令</strong>
+- 0x85：每轴＝位置(2B) + 速度(2B)
+- 0x87：每轴＝位置(2B) + 电流(2B)
+- 0x89：每轴＝速度(2B) + 电流(2B)
+- 六轴按 Axis1…Axis6 排布，各参数单位同上</p>
+<p><strong>帧类型 0x8B — 位置 + 速度 + 电流（多轴最大帧）</strong>
+- 每轴 6 字节＝位置 L/H、速度 L/H、电流 L/H
+- 字节3‑8 为 Axis1，之后每 6 字节一轴；6 轴共 36 字节数据，对应字节到字节38‑39</p>
+<p><strong>帧类型 0xA0 — 发送手势运动（0x20 | 0x80）</strong>
+- 字节3‑4：手势编号（L/H），如 1＝食指、2＝掌心向前、3＝拳头、4＝OK、5＝点赞…（全表见 3.1.8）
+- 字节5‑6：运动速度（L/H），单位 10/总行程系数/s
+- 字节7‑8：电流限制（L/H），单位 ‰，范围 0～3000</p>
+<p><strong>通用返回帧（0x81~0x8B、0xA0）</strong>
+- 字节1：帧类型（同发送）
+- 字节2‑3：状态（L/H），正确反馈为 0x0100</p>
+<h3 id="314-dh116">3.1.4 读取类指令（DH116 系列）</h3>
+<p><strong>0xDA — 读所有轴状态+状态2</strong>
+请求：字节1=0xDA, 字节2=6。返回：以 Axis1 开始，每轴 2 字节（状态、状态2），6 轴直到字节 13‑14；返回帧 COB-ID 0x480+nodeID。</p>
+<p><strong>0xDB — 位置+速度+电流+状态</strong>
+返回布局（每轴 8 字节 L/H）：位置反馈(1/总行程系数)、速度反馈(10/总行程系数/s)、电流反馈(‰0‑3000)，6 轴后接每轴状态(2B)+错误码(2B)：状态/错误码以 Axis1 起字节39‑42，直至 Axis6 字节59‑62。错误码小端，<code>错误码 &amp; 0x0FFF</code> 得到具体错误码，定义见表「错误码」。</p>
+<p><strong>0xDC — 位置+速度+转矩+状态</strong>
+同 0xDB，仅电流段换为<strong>转矩</strong>反馈（单位 0.01 mN，带正负），位置反馈字节相同，其余布局一致。</p>
+<h3 id="315">3.1.5 传感器读取（按驱动型号）</h3>
+<p><strong>0xF0 — 读取五指传感器（DH116S）</strong> 返回帧：
+- 字节2=60（字节数）
+- 拇指…小拇指各 12 字节：字节分块 3‑14/15‑26/27‑38/39‑50/51‑62；每一字节0‑255 对应一个触点 0‑25.5 N。
+五指 12 个压力触点分布见随附图。</p>
+<p><strong>0xF1 — 读取掌心压力（DH116S）</strong>
+- 字节3‑38：掌心压力数据，共36字节，每字节0‑255＝0‑25.5N。掌心 36 触点分布（右手）见随附图。</p>
+<p><strong>0xF2/0xF3/0xF4 — DH116 成对读取</strong>
+- 返回：字节2=60（字节数），每根手指数据固定 30 字节：
+  - 通道数据 10B（有效 5~9B，0‑255/通道）
+  - 法向力 4B（有效 2B，0‑655.35，1~2 组）
+  - 切向力 4B（同上）
+  - 切向力方向 4B（0‑360，65535=无方向）
+  - 接近值 2B（有效 1~2B，0‑255）
+  - 保留 6B
+- F2＝拇指+食指、F3＝中指+无名指、F4＝小拇指+掌心（掌心为 26B 压力）。</p>
+<h3 id="316-sdo">3.1.6 SDO 对象字典读写</h3>
+<p>SDO 的 COB‑ID 为 <code>0x600+nodeID</code>（请求）与 <code>0x580+nodeID</code>(返回)。</p>
+<p>读（0x40 读对象字典）：字节依次：0x40、索引低、索引高、子索引。返回 0x4B 附带索引+数据(可多字节)。
+写（0x2B 写对象字典）：字节：0x2B、索引低、索引高、子索引、数据。返回 0x60 写入成功。</p>
+<p>主要对象字典（精简）：
+| Index | Sub | 读写 | 含义/备注 |
+|-------|-----|------|-----------|
+| 0x200E | 0x1D | R | 驱动型号：DH116 ECAT=1, CANFD=2；DH116S CANFD=3… |
+| 0x200E | 0x1E | R | 软件版本 16bit→十进制版本 |
+| 0x2030 | 0x01 | R | 轴数（=6） |
+| 0x2030 | 0x02 | R | 硬件版本 |
+| 0x2030 | 0x03 | R | 每手指传感器数量 |
+| 0x2030 | 0x04 | R | 传感器类型 |
+| 0x2030 | 0x05 | R | 左右手：1=右手，2=左手 |
+| 0x2030…0x2170 | 0x06 | R | S/N（组合可得） |
+| 0x201D | 0x11 | RW | CAN 节点ID |
+| 0x201D | 0x14 | RW | CAN TPDO 通信周期（0.1ms 单位） |</p>
 <blockquote>
-<p>✏️ <em>（本小节待补充：CANFD 帧格式、指令定义、示例时序等，后续按 SDK/通信协议填写。）</em></p>
+<p>每手指传感器/类型用 Index 不同：拇指0x2030、食指0x2070、中指0x20B0、无名指0x20F0、小拇指0x2130、掌心0x2170。CAN 节点ID/TPDO 需同时写 6 轴 Index：轴1 0x201D、轴2 0x205D、轴3 0x209D、轴4 0x20DD、轴5 0x211D、轴6 0x215D。保存 SDO 到 E2 下发 <code>2F 10 10 01 73 61 76 65</code>（COB‑ID 0x600+nodeID）。</p>
 </blockquote>
+<h3 id="317">3.1.7 常用示例指令</h3>
+<ul>
+<li>使能所有轴：帧指令中功能码 0x01＝使能、0x02＝去使能、0x03＝清除报警；只需替换功能码。</li>
+<li>回零所有轴、控制所有轴运动：见 SDK 示例源码（集成后可补具体帧）。</li>
+</ul>
+<h3 id="318">3.1.8 手势定义</h3>
+<table>
+<thead>
+<tr>
+<th>手势编号</th>
+<th>动作</th>
+<th>手势编号</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>食指</td>
+<td>7</td>
+<td>掌心向上</td>
+</tr>
+<tr>
+<td>2</td>
+<td>掌心向前</td>
+<td>8</td>
+<td>数字 2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>拳头</td>
+<td>9</td>
+<td>数字 3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>OK</td>
+<td>10</td>
+<td>数字 4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>点赞</td>
+<td>11</td>
+<td>数字 6</td>
+</tr>
+<tr>
+<td>6</td>
+<td>ILY</td>
+<td>12</td>
+<td>数字 8</td>
+</tr>
+</tbody>
+</table>
+<h3 id="319">3.1.9 错误码定义（节选）</h3>
+<table>
+<thead>
+<tr>
+<th>错误码</th>
+<th>定义</th>
+<th>是否可清除</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x00A0/0x00A1</td>
+<td>电流检测回路错误</td>
+<td>否</td>
+<td>相电流通道零漂采样 AD&gt;1024</td>
+</tr>
+<tr>
+<td>0x00C0</td>
+<td>直流母线电压过高</td>
+<td>是</td>
+<td>母线电压超过过压阈值</td>
+</tr>
+<tr>
+<td>0x00D0</td>
+<td>直流母线电压过低</td>
+<td>是</td>
+<td>欠压阈值/上电使能</td>
+</tr>
+<tr>
+<td>0x00D2</td>
+<td>主电源断电</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td>0x00E1</td>
+<td>驱动器过流</td>
+<td>否</td>
+<td>检测到母线过流/绕组短路</td>
+</tr>
+<tr>
+<td>0x00F0</td>
+<td>驱动器过温</td>
+<td>否</td>
+<td>超过过温报警温度</td>
+</tr>
+<tr>
+<td>0x0100</td>
+<td>电机过载</td>
+<td>是</td>
+<td>过载率&gt;100%</td>
+</tr>
+<tr>
+<td>0x0102</td>
+<td>电机堵转</td>
+<td>是</td>
+<td>速度反馈低/持续超时</td>
+</tr>
+<tr>
+<td>0x0110</td>
+<td>拉零报警</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0150/0x0151</td>
+<td>编码器断线 / 通信错误</td>
+<td>否</td>
+<td>编码器通讯失败/CRC 校验错</td>
+</tr>
+<tr>
+<td>0x0160</td>
+<td>寻相错误</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0180</td>
+<td>位置误差过大</td>
+<td>是</td>
+<td>默认关闭此报警</td>
+</tr>
+<tr>
+<td>0x0190</td>
+<td>混合误差(振动)过大</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x01A0/0x01A1</td>
+<td>超速 / 速度失控</td>
+<td>否</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0211‑0x0213</td>
+<td>IO 端口/输出分配错误</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0240/0x0241</td>
+<td>EEPROM 参数/存储器错误</td>
+<td>否</td>
+<td>厂商参数/ IIC 接口错误</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="32-ros2">3.2 ROS2 示例工程说明</h2>
+<h3 id="321">3.2.1 编译环境</h3>
+<ul>
+<li>操作系统：Ubuntu 22.04</li>
+<li>ROS2 版本：Humble（自行安装）</li>
+</ul>
+<p>一键安装脚本：
+<div class="highlight"><pre><span></span><code>wget<span class="w"> </span>http://fishros.com/install<span class="w"> </span>-O<span class="w"> </span>fishros<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>fishros
+</code></pre></div></p>
+<h3 id="322">3.2.2 示例项目结构</h3>
+<div class="highlight"><pre><span></span><code>lhandpro_ws                  # 项目工作空间
+└── src
+    ├── lhandpro_description # urdf/mesh、监控并发布 /joint_states、rviz2启动脚本
+    ├── lhandpro_interfaces  # 定义服务接口
+    ├── lhandpro_service     # 服务节点，通过 API 操控灵巧手
+    ├── sequence_demo_cpp    # C++ 动作序列示例
+    ├── sequence_demo_py     # Python 动作序列示例
+    └── ros2_lhandpro.conf   # 预置配置文件
+</code></pre></div>
+<h3 id="323">3.2.3 编译步骤</h3>
+<ol>
+<li>
+<p>配置环境（复制动态库到系统目录并刷新）：
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>src/lhandpro_service/thirdparty/lib/libLHandProLib.so<span class="w"> </span>/usr/local/lib/
+sudo<span class="w"> </span>ldconfig
+sudo<span class="w"> </span>setcap<span class="w"> </span>cap_net_raw,cap_net_admin+ep<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>./install/lhandpro_service/lib/lhandpro_service/lhandpro_service
+</code></pre></div></p>
+</li>
+<li>
+<p>打开 <code>lhandpro_ws/src/ros2_lhandpro.conf</code>，把文件内各 install 路径改成<strong>本机实际路径</strong>（需与本项目目录一致）。</p>
+</li>
+<li>
+<p>将配置复制到系统动态链接目录：
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>src/ros2_lhandpro.conf<span class="w"> </span>/etc/ld.so.conf.d/
+sudo<span class="w"> </span>ldconfig
+</code></pre></div></p>
+</li>
+<li>
+<p>编译：
+<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-xzf<span class="w"> </span>lhandpro_ws_src.tar.gz<span class="w"> </span>-C<span class="w"> </span>./lhandpro_ws<span class="w">   </span><span class="c1"># 先解压</span>
+<span class="nb">cd</span><span class="w"> </span>lhandpro_ws
+colcon<span class="w"> </span>build
+<span class="nb">source</span><span class="w"> </span>install/setup.bash
+</code></pre></div></p>
+</li>
+</ol>
+<h3 id="324">3.2.4 运行示例</h3>
+<ol>
+<li>
+<p>启动控制服务（会打印网口列表，并自动连接代码指定默认网口）：
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>lhandpro_service<span class="w"> </span>lhandpro.launch.py
+</code></pre></div></p>
 <blockquote>
-<p>✏️ <em>（本小节待补充：ROS2 示例工程的安装、话题/服务接口、收发示例与 Demo 说明，后续按 SDK 填写。）</em></p>
+<p>需确保与实际 EtherCAT 使用的网口一致；修改代码中默认网口后要重新 <code>colcon build</code>。</p>
 </blockquote>
-<div class="admonition tip">
-<p class="admonition-title">占位提示</p>
-<p>本节需要你的 CANFD 协议与 ROS2 SDK 资料后进行填充，当前保留标题与结构。如果你希望我把内容再分成更细的小标题（如「启动流程」「消息格式」「示例代码」），告诉我即可。</p>
-</div>
+</li>
+<li>
+<p>运行控制示例（自动执行动作序列）：
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>sequence_demo_py<span class="w"> </span>sequence.launch.py<span class="w">     </span><span class="c1"># Python</span>
+ros2<span class="w"> </span>launch<span class="w"> </span>sequence_demo_cpp<span class="w"> </span>sequence.launch.py<span class="w">    </span><span class="c1"># C++</span>
+</code></pre></div></p>
+</li>
+<li>
+<p>Rviz2 仿真显示：
+<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>lhandpro_description<span class="w"> </span>display_lhandpro.launch.py
+</code></pre></div>
+该脚本会启动 <code>robot_state_publisher</code>、<code>lhandpro_state_publisher</code>（通过服务监控角度并经 <code>/joint_states</code> 发布）与 <code>rviz2</code> 及预设 rviz 配置；运行 2 的控制示例时即可看到实际灵巧手与模型同步运动。</p>
+</li>
+</ol>
 
 
 
