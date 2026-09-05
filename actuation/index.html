@@ -609,7 +609,7 @@
   <a href="#319" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.9 错误码定义（节选）
+        3.1.9 错误码定义
       
     </span>
   </a>
@@ -660,17 +660,6 @@
     <span class="md-ellipsis">
       
         3.2.3 编译步骤
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#324" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3.2.4 运行示例
       
     </span>
   </a>
@@ -894,20 +883,6 @@
 <td>6 轴反馈+状态+错误码</td>
 </tr>
 <tr>
-<td>0xF0</td>
-<td>读五指传感器信息（DH116S）</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>五指各12 触点压力</td>
-</tr>
-<tr>
-<td>0xF1</td>
-<td>读掌心传感器信息（DH116S）</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>掌心 36 触点压力</td>
-</tr>
-<tr>
 <td>0xF2</td>
 <td>读大拇指+食指传感器（DH116）</td>
 <td>0x500+nodeID</td>
@@ -975,12 +950,6 @@
 <p><strong>0xDC — 位置+速度+转矩+状态</strong>
 同 0xDB，仅电流段换为<strong>转矩</strong>反馈（单位 0.01 mN，带正负），位置反馈字节相同，其余布局一致。</p>
 <h3 id="315">3.1.5 传感器读取（按驱动型号）</h3>
-<p><strong>0xF0 — 读取五指传感器（DH116S）</strong> 返回帧：
-- 字节2=60（字节数）
-- 拇指…小拇指各 12 字节：字节分块 3‑14/15‑26/27‑38/39‑50/51‑62；每一字节0‑255 对应一个触点 0‑25.5 N。
-五指 12 个压力触点分布见随附图。</p>
-<p><strong>0xF1 — 读取掌心压力（DH116S）</strong>
-- 字节3‑38：掌心压力数据，共36字节，每字节0‑255＝0‑25.5N。掌心 36 触点分布（右手）见随附图。</p>
 <p><strong>0xF2/0xF3/0xF4 — DH116 成对读取</strong>
 - 返回：字节2=60（字节数），每根手指数据固定 30 字节：
   - 通道数据 10B（有效 5~9B，0‑255/通道）
@@ -997,7 +966,7 @@
 <p>主要对象字典（精简）：
 | Index | Sub | 读写 | 含义/备注 |
 |-------|-----|------|-----------|
-| 0x200E | 0x1D | R | 驱动型号：DH116 ECAT=1, CANFD=2；DH116S CANFD=3… |
+| 0x200E | 0x1D | R | 驱动型号：DH116 ECAT=1, CANFD=2； |
 | 0x200E | 0x1E | R | 软件版本 16bit→十进制版本 |
 | 0x2030 | 0x01 | R | 轴数（=6） |
 | 0x2030 | 0x02 | R | 硬件版本 |
@@ -1064,7 +1033,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="319">3.1.9 错误码定义（节选）</h3>
+<h3 id="319">3.1.9 错误码定义</h3>
 <table>
 <thead>
 <tr>
@@ -1184,66 +1153,15 @@
 <div class="highlight"><pre><span></span><code>wget<span class="w"> </span>http://fishros.com/install<span class="w"> </span>-O<span class="w"> </span>fishros<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>.<span class="w"> </span>fishros
 </code></pre></div></p>
 <h3 id="322">3.2.2 示例项目结构</h3>
-<div class="highlight"><pre><span></span><code>lhandpro_ws                  # 项目工作空间
+<div class="highlight"><pre><span></span><code>hand_control_LePu                 # 项目工作空间
+└── Readme
 └── src
-    ├── lhandpro_description # urdf/mesh、监控并发布 /joint_states、rviz2启动脚本
-    ├── lhandpro_interfaces  # 定义服务接口
-    ├── lhandpro_service     # 服务节点，通过 API 操控灵巧手
-    ├── sequence_demo_cpp    # C++ 动作序列示例
-    ├── sequence_demo_py     # Python 动作序列示例
-    └── ros2_lhandpro.conf   # 预置配置文件
+    ├── and_control_controller
+    ├── hand_control_driver
+    ├── hand_control_interfaces
 </code></pre></div>
 <h3 id="323">3.2.3 编译步骤</h3>
-<ol>
-<li>
-<p>配置环境（复制动态库到系统目录并刷新）：
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>src/lhandpro_service/thirdparty/lib/libLHandProLib.so<span class="w"> </span>/usr/local/lib/
-sudo<span class="w"> </span>ldconfig
-sudo<span class="w"> </span>setcap<span class="w"> </span>cap_net_raw,cap_net_admin+ep<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>./install/lhandpro_service/lib/lhandpro_service/lhandpro_service
-</code></pre></div></p>
-</li>
-<li>
-<p>打开 <code>lhandpro_ws/src/ros2_lhandpro.conf</code>，把文件内各 install 路径改成<strong>本机实际路径</strong>（需与本项目目录一致）。</p>
-</li>
-<li>
-<p>将配置复制到系统动态链接目录：
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cp<span class="w"> </span>src/ros2_lhandpro.conf<span class="w"> </span>/etc/ld.so.conf.d/
-sudo<span class="w"> </span>ldconfig
-</code></pre></div></p>
-</li>
-<li>
-<p>编译：
-<div class="highlight"><pre><span></span><code>tar<span class="w"> </span>-xzf<span class="w"> </span>lhandpro_ws_src.tar.gz<span class="w"> </span>-C<span class="w"> </span>./lhandpro_ws<span class="w">   </span><span class="c1"># 先解压</span>
-<span class="nb">cd</span><span class="w"> </span>lhandpro_ws
-colcon<span class="w"> </span>build
-<span class="nb">source</span><span class="w"> </span>install/setup.bash
-</code></pre></div></p>
-</li>
-</ol>
-<h3 id="324">3.2.4 运行示例</h3>
-<ol>
-<li>
-<p>启动控制服务（会打印网口列表，并自动连接代码指定默认网口）：
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>lhandpro_service<span class="w"> </span>lhandpro.launch.py
-</code></pre></div></p>
-<blockquote>
-<p>需确保与实际 EtherCAT 使用的网口一致；修改代码中默认网口后要重新 <code>colcon build</code>。</p>
-</blockquote>
-</li>
-<li>
-<p>运行控制示例（自动执行动作序列）：
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>sequence_demo_py<span class="w"> </span>sequence.launch.py<span class="w">     </span><span class="c1"># Python</span>
-ros2<span class="w"> </span>launch<span class="w"> </span>sequence_demo_cpp<span class="w"> </span>sequence.launch.py<span class="w">    </span><span class="c1"># C++</span>
-</code></pre></div></p>
-</li>
-<li>
-<p>Rviz2 仿真显示：
-<div class="highlight"><pre><span></span><code>ros2<span class="w"> </span>launch<span class="w"> </span>lhandpro_description<span class="w"> </span>display_lhandpro.launch.py
-</code></pre></div>
-该脚本会启动 <code>robot_state_publisher</code>、<code>lhandpro_state_publisher</code>（通过服务监控角度并经 <code>/joint_states</code> 发布）与 <code>rviz2</code> 及预设 rviz 配置；运行 2 的控制示例时即可看到实际灵巧手与模型同步运动。</p>
-</li>
-</ol>
+<p>详见hand_control_LePu-&gt;Readme</p>
 
 
 
