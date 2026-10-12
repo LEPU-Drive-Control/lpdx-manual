@@ -532,7 +532,7 @@
   <a href="#312" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.2 帧类型速览
+        3.1.2 帧结构与全局约定
       
     </span>
   </a>
@@ -540,10 +540,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#313-6-l" class="md-nav__link">
+  <a href="#313" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.3 常用指令帧格式（6 轴，字节小端 L）
+        3.1.3 帧类型速查
       
     </span>
   </a>
@@ -554,7 +554,7 @@
   <a href="#314" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.4 读取类指令
+        3.1.4 控制方式：实时帧 与 同步帧
       
     </span>
   </a>
@@ -565,7 +565,7 @@
   <a href="#315" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.5 传感器读取
+        3.1.5 发送帧格式
       
     </span>
   </a>
@@ -573,10 +573,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#316-sdo" class="md-nav__link">
+  <a href="#316" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.6 SDO 对象字典读写
+        3.1.6 返回帧格式
       
     </span>
   </a>
@@ -587,7 +587,7 @@
   <a href="#317" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.7 常用示例指令
+        3.1.7 传感器读取
       
     </span>
   </a>
@@ -595,10 +595,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#318" class="md-nav__link">
+  <a href="#318-sdo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.8 手势定义
+        3.1.8 SDO 对象字典读写
       
     </span>
   </a>
@@ -609,7 +609,29 @@
   <a href="#319" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3.1.9 错误码定义
+        3.1.9 常用示例指令
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3110" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.10 手势定义
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3111" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1.11 错误码定义
       
     </span>
   </a>
@@ -736,227 +758,946 @@
 </tr>
 </tbody>
 </table>
-<h3 id="312">3.1.2 帧类型速览</h3>
+<h3 id="312">3.1.2 帧结构与全局约定</h3>
+<p>所有指令帧共用以下帧头结构，后续各帧表格描述的是数据区字节。</p>
 <table>
 <thead>
 <tr>
-<th>帧类型(字节1)</th>
-<th>含义</th>
-<th>COB-ID（请求）</th>
-<th>COB-ID（返回）</th>
-<th>数据段说明</th>
+<th>字段</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COB-ID</td>
+<td>0x500 / 0x480 / 0x600 / 0x580 + nodeID</td>
+<td>决定发送/返回方向，见下方分配表</td>
+</tr>
+<tr>
+<td>字节1</td>
+<td>帧类型</td>
+<td><strong>bit7（0x80）= 同步帧标志；bit6~0 = 实时帧类型</strong></td>
+</tr>
+<tr>
+<td>字节2</td>
+<td>有效轴数 / 返回帧配置</td>
+<td>填轴数（如 6）；同步帧模式下可填返回帧类型（如 0xDB，返回帧类型同样带 0x80 标志）</td>
+</tr>
+<tr>
+<td>字节3 起</td>
+<td>数据区</td>
+<td>各帧功能数据，多字节数值均为小端序</td>
+</tr>
+</tbody>
+</table>
+<p><strong>COB-ID 分配</strong></p>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>COB-ID</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>发送帧</td>
+<td>0x500 + nodeID</td>
+<td>控制指令（模式/位置/速度/电流/手势等）</td>
+</tr>
+<tr>
+<td>返回帧</td>
+<td>0x480 + nodeID</td>
+<td>指令返回帧、读命令返回帧</td>
+</tr>
+<tr>
+<td>SDO 请求</td>
+<td>0x600 + nodeID</td>
+<td>读（0x40）/ 写（0x2B）对象字典</td>
+</tr>
+<tr>
+<td>SDO 响应</td>
+<td>0x580 + nodeID</td>
+<td>读返回 0x4B / 写确认 0x60</td>
+</tr>
+</tbody>
+</table>
+<p><strong>通用约定</strong></p>
+<ul>
+<li>多字节数值均为小端序（低字节在前）。</li>
+<li>多轴帧中，第 N 轴数据起始字节 = 数据区起始字节 + (N-1) × 每轴字节数（每轴字节数见各帧表格）。</li>
+<li>同步帧返回的状态 0x0100 对应 Axis 状态格式中“运行状态 = 1（正常运行）”。</li>
+<li>0xDB / 0xDC 返回帧中的 16 位错误码与 0x0FFF 相与后得到具体错误码，含义见「错误码定义」。</li>
+</ul>
+<h3 id="313">3.1.3 帧类型速查</h3>
+<p><strong>发送帧（COB-ID 0x500 + nodeID）</strong></p>
+<table>
+<thead>
+<tr>
+<th>实时帧</th>
+<th>同步帧</th>
+<th>功能</th>
+<th>数据区</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>0x00</td>
-<td>配置实时返回帧</td>
-<td>0x500+nodeID</td>
 <td>—</td>
-<td>配置要上报的返回帧类型与循环周期</td>
+<td>配置定时返回帧</td>
+<td>LENGTH + (帧类型, 循环周期) 对</td>
 </tr>
 <tr>
+<td>0x01</td>
 <td>0x81</td>
-<td>模式与控制</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴模式+控制</td>
+<td>各轴模式 + 控制</td>
+<td>2B/轴</td>
 </tr>
 <tr>
+<td>0x02</td>
 <td>0x82</td>
-<td>发送所有轴位置</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴位置</td>
+<td>设置轴位置</td>
+<td>2B/轴</td>
 </tr>
 <tr>
+<td>0x03</td>
 <td>0x83</td>
-<td>发送所有轴速度</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴速度</td>
+<td>设置轴速度</td>
+<td>2B/轴</td>
 </tr>
 <tr>
+<td>0x04</td>
 <td>0x84</td>
-<td>发送所有轴电流</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴电流</td>
+<td>设置轴电流</td>
+<td>2B/轴</td>
 </tr>
 <tr>
+<td>0x05</td>
 <td>0x85</td>
-<td>位置+速度</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴×（位置+速度）</td>
+<td>位置 + 速度</td>
+<td>4B/轴</td>
 </tr>
 <tr>
+<td>0x07</td>
 <td>0x87</td>
-<td>位置+电流</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴×（位置+电流）</td>
+<td>位置 + 电流</td>
+<td>4B/轴</td>
 </tr>
 <tr>
+<td>0x09</td>
 <td>0x89</td>
-<td>速度+电流</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴×（速度+电流）</td>
+<td>速度 + 电流</td>
+<td>4B/轴</td>
 </tr>
 <tr>
+<td>0x0B</td>
 <td>0x8B</td>
-<td>位置+速度+电流</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴×（位置+速度+电流）</td>
+<td>位置 + 速度 + 电流</td>
+<td>6B/轴</td>
 </tr>
 <tr>
+<td>0x20</td>
 <td>0xA0</td>
 <td>手势运动</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>手势编号+速度+电流</td>
-</tr>
-<tr>
-<td>0xDA</td>
-<td>读所有轴状态+状态2</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴状态</td>
-</tr>
-<tr>
-<td>0xDB</td>
-<td>读位置+速度+电流+状态</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴位置/速度/电流反馈 + 状态 + 错误码</td>
-</tr>
-<tr>
-<td>0xDC</td>
-<td>读位置+速度+转矩+状态</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>6 轴位置/速度/转矩反馈 + 状态 + 错误码</td>
-</tr>
-<tr>
-<td>0xF2</td>
-<td>读大拇指+食指传感器</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>每指 30B</td>
-</tr>
-<tr>
-<td>0xF3</td>
-<td>读中指+无名指传感器</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>每指 30B</td>
-</tr>
-<tr>
-<td>0xF4</td>
-<td>读小拇指+掌心传感器</td>
-<td>0x500+nodeID</td>
-<td>0x480+nodeID</td>
-<td>手指 + 掌心 30B</td>
+<td>手势编号 + 速度 + 电流，6B</td>
 </tr>
 </tbody>
 </table>
-<p><strong>说明</strong>：发送帧字节2 若设为有效轴数，则按上表固定返回帧；若字节2 配置为返回帧类型（如 0xDB），则返回帧按该类型。发送帧通用：字节1＝帧类型（<code>0xT0 | 0x80</code>），字节2＝有效轴数（默认 6 ∕ 0xDB 指返回帧）。</p>
-<h3 id="313-6-l">3.1.3 常用指令帧格式（6 轴，字节小端 L）</h3>
-<p>所有“控制类”发送帧的公共骨架：字节1＝帧类型；字节2＝有效轴数（6，或配置为返回帧类型 0xDB）。</p>
-<p><strong>帧类型 0x00 — 配置实时返回帧</strong></p>
+<p><strong>返回帧（COB-ID 0x480 + nodeID）与读命令帧</strong></p>
+<table>
+<thead>
+<tr>
+<th>帧类型</th>
+<th>方向</th>
+<th>功能</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x50</td>
+<td>返回</td>
+<td>位置 + 速度 + 电流 + 状态</td>
+<td>≤ 8 轴</td>
+</tr>
+<tr>
+<td>0x53</td>
+<td>返回</td>
+<td>位置 + 速度 + 状态</td>
+<td>≤ 12 轴</td>
+</tr>
+<tr>
+<td>0x55</td>
+<td>返回</td>
+<td>位置 + 电流 + 状态</td>
+<td>≤ 12 轴</td>
+</tr>
+<tr>
+<td>0x5A</td>
+<td>返回</td>
+<td>状态 + 状态2</td>
+<td>≤ 31 轴</td>
+</tr>
+<tr>
+<td>0x70</td>
+<td>返回</td>
+<td>五指压力 12B×5</td>
+<td>DH116S</td>
+</tr>
+<tr>
+<td>0x71</td>
+<td>返回</td>
+<td>掌心压力 36B</td>
+<td>DH116S</td>
+</tr>
+<tr>
+<td>0x72</td>
+<td>返回</td>
+<td>大拇指 + 食指 30B×2</td>
+<td>DH116</td>
+</tr>
+<tr>
+<td>0x73</td>
+<td>返回</td>
+<td>中指 + 无名指 30B×2</td>
+<td>DH116</td>
+</tr>
+<tr>
+<td>0x74</td>
+<td>返回</td>
+<td>小拇指 + 掌心 30B×2</td>
+<td>DH116</td>
+</tr>
+<tr>
+<td>0xDA</td>
+<td>读命令</td>
+<td>读状态 + 状态2</td>
+<td>返回 2B/轴</td>
+</tr>
+<tr>
+<td>0xDB</td>
+<td>读命令</td>
+<td>读位置 + 速度 + 电流 + 状态 + 错误码</td>
+<td>返回 10B/轴</td>
+</tr>
+<tr>
+<td>0xDC</td>
+<td>读命令</td>
+<td>读位置 + 速度 + 转矩 + 状态 + 错误码</td>
+<td>返回 10B/轴</td>
+</tr>
+</tbody>
+</table>
+<h3 id="314">3.1.4 控制方式：实时帧 与 同步帧</h3>
+<p>DH116(S) 提供两种控制方式，通过发送帧字节1（帧类型）的最高位 bit7（0x80）区分。</p>
+<p><strong>实时帧（帧类型 bit7 = 0）</strong></p>
+<p>帧类型为各指令的基础值，如 0x01、0x02、0x0B 等。上位机下发指令后，设备<strong>仅执行指令、不立即返回</strong>该指令的反馈帧。需要周期获取设备数据（位置/速度/电流/状态/传感器）时，使用帧 0x00 配置实时返回帧，设备按配置的定时周期（1 ms）自动上报指定返回帧。</p>
+<p><strong>同步帧（帧类型 bit7 = 1）</strong></p>
+<p>帧类型 = 实时帧类型 | 0x80，例如 0x81 = 0x01 | 0x80。每发送一帧，设备执行指令后<strong>立即返回</strong>该帧类型对应的固定格式返回帧（COB-ID 0x480 + nodeID，字节2~3 为状态，小端序，正确反馈 0x0100）。适合需要“发一条、确认一条”的控制命令（使能、回零、急停等）。</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>实时帧</th>
+<th>同步帧</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>帧类型 bit7（0x80）</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>帧类型示例</td>
+<td>0x01 / 0x02 / 0x0B</td>
+<td>0x81 / 0x82 / 0x8B</td>
+</tr>
+<tr>
+<td>指令后返回时机</td>
+<td>不立即返回</td>
+<td>立即返回该帧对应的固定返回帧</td>
+</tr>
+<tr>
+<td>周期数据上报</td>
+<td>由帧 0x00 配置定时返回帧实现</td>
+<td>不可与帧 0x00 同时使用</td>
+</tr>
+<tr>
+<td>典型用途</td>
+<td>高频下发运动指令、批量控制</td>
+<td>需逐条确认的命令（使能/回零/急停等）</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">注意事项</p>
 <ul>
-<li>COB-ID：0x500+nodeID</li>
-<li>字节1：0x00（帧类型）</li>
-<li>字节2：LENGTH（后续配置的字节长度）</li>
-<li>字节3：第 1 帧类型（要上报的返回帧类型，如 0x50）</li>
-<li>字节4：第 1 帧循环周期间隔（每 n 个定时周期发送一次，n 为当前参数设定）</li>
-<li>字节5：第 2 帧类型（如 0x5A）</li>
-<li>字节6：第 2 帧循环周期间隔</li>
-<li>…… 可继续配置多组（定时周期为 1 ms）</li>
+<li>帧 0x00（配置实时返回帧）与同步帧模式<strong>不可同时使用</strong>，二者只能择其一。</li>
+<li>本文各发送帧表格中的帧类型均为<strong>实时帧值（bit7 = 0）</strong>；使用同步帧模式时发送 <code>0xNN | 0x80</code> 即可，如 0x01 → 0x81。</li>
+<li>两种方式下发送帧 COB-ID 均为 0x500 + nodeID；同步帧的返回帧 COB-ID 为 0x480 + nodeID。</li>
 </ul>
-<p><strong>帧类型 0x81 — 模式与控制（0x01 | 0x80）</strong></p>
+</div>
+<h3 id="315">3.1.5 发送帧格式</h3>
+<p>字节2 的两种用法：</p>
 <ul>
-<li>字节1：0x81（帧类型）</li>
-<li>字节2：6（有效轴数）</li>
-<li>字节3‑4：Axis1 模式 + 控制</li>
-<li>字节5‑6：Axis2 模式 + 控制</li>
-<li>…… 依次每轴 2 字节，共 6 轴</li>
-<li>字节13‑14：Axis6 模式 + 控制</li>
+<li><strong>字节2 = 有效轴数（如 6）</strong>：返回帧为该发送帧（字节1 帧类型）对应的<strong>默认返回帧格式</strong>；实时帧与同步帧均适用。</li>
+<li><strong>字节2 = 返回帧类型（仅同步帧模式有效，如 0xDB = 0x5B | 0x80）</strong>：返回帧改为字节2 中指定帧类型的返回帧格式（返回帧帧类型同样带 0x80 标志），不再使用该帧的默认返回帧格式；实时帧模式下字节2 固定为有效轴数。</li>
 </ul>
-<p><strong>帧类型 0x82 — 发送所有轴位置（0x02 | 0x80）</strong></p>
-<ul>
-<li>字节1‑2：0x82 / 有效轴数</li>
-<li>字节3‑4：Axis1 位置（L/H），单位 1/总行程系数，默认总行程系数＝10000</li>
-<li>字节5‑12：Axis2…Axis5 位置（各 2 字节）</li>
-<li>字节13‑14：Axis6 位置</li>
-</ul>
-<p><strong>帧类型 0x83 — 发送所有轴速度（0x03 | 0x80）</strong></p>
-<ul>
-<li>字节3‑4：Axis1 速度（L/H），单位 10/总行程系数/s</li>
-<li>字节5‑12：Axis2…Axis5 速度（各 2 字节）</li>
-<li>字节13‑14：Axis6 速度</li>
-</ul>
-<p><strong>帧类型 0x84 — 发送所有轴电流（0x04 | 0x80）</strong></p>
-<ul>
-<li>字节3‑4：Axis1 电流（L/H），单位 ‰，范围 0～3000</li>
-<li>…… Axis2…6 电流（各 2 字节，至字节13‑14）</li>
-</ul>
-<p><strong>帧类型 0x85 / 0x87 / 0x89 — 复合指令</strong></p>
-<ul>
-<li>0x85：每轴＝位置(2B) + 速度(2B)</li>
-<li>0x87：每轴＝位置(2B) + 电流(2B)</li>
-<li>0x89：每轴＝速度(2B) + 电流(2B)</li>
-<li>六轴按 Axis1…Axis6 排布，各参数单位同上</li>
-</ul>
-<p><strong>帧类型 0x8B — 位置 + 速度 + 电流（多轴最大帧）</strong></p>
-<ul>
-<li>每轴 6 字节＝位置 L/H、速度 L/H、电流 L/H</li>
-<li>字节3‑8 为 Axis1，之后每 6 字节一轴；6 轴共 36 字节数据，对应到字节38‑39</li>
-</ul>
-<p><strong>帧类型 0xA0 — 发送手势运动（0x20 | 0x80）</strong></p>
-<ul>
-<li>字节3‑4：手势编号（L/H），如 1＝食指、2＝掌心向前、3＝拳头、4＝OK、5＝点赞…（全表见 3.1.8）</li>
-<li>字节5‑6：运动速度（L/H），单位 10/总行程系数/s</li>
-<li>字节7‑8：电流限制（L/H），单位 ‰，范围 0～3000</li>
-</ul>
-<p><strong>通用返回帧（0x81~0x8B、0xA0）</strong></p>
-<ul>
-<li>字节1：帧类型（同发送）</li>
-<li>字节2‑3：状态（L/H），正确反馈为 0x0100</li>
-</ul>
-<h3 id="314">3.1.4 读取类指令</h3>
-<p><strong>0xDA — 读所有轴状态+状态2</strong>
-请求：字节1=0xDA, 字节2=6。返回：以 Axis1 开始，每轴 2 字节（状态、状态2），6 轴直到字节 13‑14；返回帧 COB-ID 0x480+nodeID。</p>
-<p><strong>0xDB — 位置+速度+电流+状态</strong>
-返回布局（每轴 8 字节 L/H）：位置反馈(1/总行程系数)、速度反馈(10/总行程系数/s)、电流反馈(‰ 0‑3000)，6 轴后接每轴状态(2B)+错误码(2B)：状态/错误码以 Axis1 起字节39‑42，直至 Axis6 字节59‑62。错误码小端，<code>错误码 &amp; 0x0FFF</code> 得到具体错误码，定义见表「错误码」。</p>
-<p><strong>0xDC — 位置+速度+转矩+状态</strong>
-同 0xDB，仅电流段换为<strong>转矩</strong>反馈（单位 0.01 mN，带正负），位置反馈字节相同，其余布局一致。</p>
-<h3 id="315">3.1.5 传感器读取</h3>
-<p><strong>0xF2/0xF3/0xF4 — 成对读取</strong></p>
-<ul>
-<li>返回：字节2=60（字节数），每根手指数据固定 30 字节：</li>
-<li>通道数据 10B（有效 5~9B，0‑255/通道）</li>
-<li>法向力 4B（有效 2B，0‑655.35，1~2 组）</li>
-<li>切向力 4B（同上）</li>
-<li>切向力方向 4B（0‑360，65535=无方向）</li>
-<li>接近值 2B（有效 1~2B，0‑255）</li>
-<li>保留 6B</li>
-<li>F2＝拇指+食指、F3＝中指+无名指、F4＝小拇指+掌心（掌心为 26B 压力）</li>
-</ul>
-<h3 id="316-sdo">3.1.6 SDO 对象字典读写</h3>
-<p>SDO 的 COB‑ID 为 <code>0x600+nodeID</code>（请求）与 <code>0x580+nodeID</code>(返回)。</p>
-<p>读（0x40 读对象字典）：字节依次：0x40、索引低、索引高、子索引。返回 0x4B 附带索引+数据(可多字节)。
-写（0x2B 写对象字典）：字节：0x2B、索引低、索引高、子索引、数据。返回 0x60 写入成功。</p>
-<p>主要对象字典（精简）：</p>
+<p><strong>同步帧统一返回帧格式</strong>（以 0x81 为例，仅字节1 帧类型随发送帧不同）</p>
+<table>
+<thead>
+<tr>
+<th>内容</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>COB-ID</td>
+<td>0x480 + nodeID</td>
+</tr>
+<tr>
+<td>字节1</td>
+<td>0x81（发送时的帧类型 0x01 | 0x80）</td>
+</tr>
+<tr>
+<td>字节2</td>
+<td>状态 L，正确反馈为 0x0100（小端序）</td>
+</tr>
+<tr>
+<td>字节3</td>
+<td>状态 H</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0x00 — 配置实时返回帧</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x00</td>
+<td>帧类型</td>
+</tr>
+<tr>
+<td>2</td>
+<td>LENGTH</td>
+<td>后面配置的字节长度</td>
+</tr>
+<tr>
+<td>3</td>
+<td>第 1 帧类型</td>
+<td>返回帧类型（0x50）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>第 1 帧循环周期间隔</td>
+<td>每 n 个定时周期发送一次（n 为当前参数设定）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>第 2 帧类型</td>
+<td>返回帧类型（0x5A）</td>
+</tr>
+<tr>
+<td>6</td>
+<td>第 2 帧循环周期间隔</td>
+<td>每 n 个定时周期发送一次</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td>可继续配置多组，定时周期为 1 ms</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0x01 / 0x81 — 模式及控制</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x01（同步帧为 0x81）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>6（有效轴数；同步帧下可配置返回帧类型，如 0xDB）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Axis1 模式（Axis 模式格式）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Axis1 控制（Axis 控制格式）</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Axis6 模式</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Axis6 控制</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Axis 模式格式</strong></p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>功能</th>
+<th>取值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bit7</td>
+<td>指令同步模式</td>
+<td>0: 收到指令后立即更新；1: 收到指令同步更新命令后才更新</td>
+</tr>
+<tr>
+<td>bit5~bit6</td>
+<td>回零模式</td>
+<td>1: 负向回零</td>
+</tr>
+<tr>
+<td>bit3~bit4</td>
+<td>回零方法</td>
+<td>0: 力矩回零</td>
+</tr>
+<tr>
+<td>bit0~bit2</td>
+<td>运动模式</td>
+<td>0: 位置+力矩混合控制；5: 回零</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Axis 控制格式</strong></p>
+<blockquote>
+<p>控制命令有变化才生效：新的控制命令需与旧控制命令不同，才会被执行。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>控制值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>无指令，空闲</td>
+</tr>
+<tr>
+<td>1</td>
+<td>使能</td>
+</tr>
+<tr>
+<td>2</td>
+<td>断使能</td>
+</tr>
+<tr>
+<td>3</td>
+<td>清除报警</td>
+</tr>
+<tr>
+<td>4</td>
+<td>触发回零</td>
+</tr>
+<tr>
+<td>7</td>
+<td>急停</td>
+</tr>
+<tr>
+<td>8</td>
+<td>撤销急停</td>
+</tr>
+<tr>
+<td>10</td>
+<td>指令同步更新命令</td>
+</tr>
+<tr>
+<td>11</td>
+<td>重置传感器零位</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0x02 / 0x82 — 发送所有轴位置</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x02（同步帧为 0x82）</td>
+<td>帧类型</td>
+</tr>
+<tr>
+<td>2</td>
+<td>6</td>
+<td>有效轴数</td>
+</tr>
+<tr>
+<td>3~4</td>
+<td>Axis1 位置指令 L/H</td>
+<td>单位 1/总行程系数，默认总行程系数 = 10000</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>13~14</td>
+<td>Axis6 位置指令 L/H</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>0x03 / 0x83 — 发送所有轴速度</strong></p>
+<p>每轴 2 字节，单位 10/总行程系数/s，字节 3~14。</p>
+<p><strong>0x04 / 0x84 — 发送所有轴电流</strong></p>
+<p>每轴 2 字节，单位 ‰，范围 0～3000，字节 3~14。</p>
+<p><strong>0x05 / 0x85 — 位置 + 速度</strong></p>
+<p>每轴 4 字节（位置 2B + 速度 2B），字节 3~26。</p>
+<p><strong>0x07 / 0x87 — 位置 + 电流</strong></p>
+<p>每轴 4 字节（位置 2B + 电流 2B），字节 3~26。</p>
+<p><strong>0x09 / 0x89 — 速度 + 电流</strong></p>
+<p>每轴 4 字节（速度 2B + 电流 2B），字节 3~26。</p>
+<p><strong>0x0B / 0x8B — 位置 + 速度 + 电流</strong>（多轴最大帧）</p>
+<p>每轴 6 字节（位置 2B + 速度 2B + 电流 2B），字节3~8 为 Axis1，之后每 6 字节一轴，6 轴共 36 字节，到字节 38 结束。</p>
+<p><strong>0x20 / 0xA0 — 发送手势运动</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3~4</td>
+<td>手势编号 L/H</td>
+<td>1 - 食指, 2 - 掌心向前, 3 - 拳头, 4 - OK, 5 - 点赞（全表见 3.1.10）</td>
+</tr>
+<tr>
+<td>5~6</td>
+<td>运动速度 L/H</td>
+<td>单位 10/总行程系数/s</td>
+</tr>
+<tr>
+<td>7~8</td>
+<td>电流限制 L/H</td>
+<td>单位 ‰，范围 0～3000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="316">3.1.6 返回帧格式</h3>
+<div class="admonition warning">
+<p class="admonition-title">DH116 与 DH116S 的传感器返回帧不同，使用前请确认产品型号</p>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>DH116</th>
+<th>DH116S</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>五指压力</td>
+<td>无独立帧，由 0xF2~0xF4 分组返回</td>
+<td>0xF0：五指各 12B 压力</td>
+</tr>
+<tr>
+<td>掌心压力</td>
+<td>0xF4 内返回掌心 26B</td>
+<td>0xF1：掌心 36B</td>
+</tr>
+<tr>
+<td>单指数据</td>
+<td>0xF2/0xF3/0xF4：每指 30B（通道/法向力/切向力/方向/接近值）</td>
+<td>0xF0：每指 12B 压力点数据</td>
+</tr>
+<tr>
+<td>传感器返回帧</td>
+<td>0x72 / 0x73 / 0x74</td>
+<td>0x70 / 0x71</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Axis 状态格式</strong></p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>功能</th>
+<th>取值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bit7~bit5</td>
+<td>运行状态</td>
+<td>0: 静止无指令；1: 正常运行；2: 正常停止；3: 正限位；4: 负限位；5: 正负限位；6: 急停；7: 回零运行</td>
+</tr>
+<tr>
+<td>bit4</td>
+<td>回零状态</td>
+<td>—</td>
+</tr>
+<tr>
+<td>bit3</td>
+<td>力矩到位状态</td>
+<td>—</td>
+</tr>
+<tr>
+<td>bit2</td>
+<td>零速状态</td>
+<td>—</td>
+</tr>
+<tr>
+<td>bit1</td>
+<td>位置到位状态</td>
+<td>—</td>
+</tr>
+<tr>
+<td>bit0</td>
+<td>使能状态</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>同步帧返回的状态反馈 0x0100 即“运行状态 = 1（正常运行）”。</p>
+<p><strong>Axis 状态2格式</strong></p>
+<table>
+<thead>
+<tr>
+<th>位</th>
+<th>取值说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>bit3~bit0</td>
+<td>简易报警代码：0: 无报警；1: 位置超差；2: 超速；3: 过流；4: 过载；5: 过压；6: 欠压；7: 编码器错误；8: 堵转；15: 其他报警</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0xDA — 读取所有轴的状态 + 状态2</strong></p>
+<p>请求：字节1 = 0xDA，字节2 = 6</p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0xDA 帧类型（0x5A | 0x80）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>6 有效轴数</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Axis1 状态（Axis 状态格式）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Axis1 状态2（Axis 状态2格式）</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Axis6 状态</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Axis6 状态2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0xDB — 读取所有轴位置 + 速度 + 电流 + 状态</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3~4</td>
+<td>Axis1 位置反馈 L/H，单位 1/总行程系数（默认 10000）</td>
+</tr>
+<tr>
+<td>5~6</td>
+<td>Axis1 速度反馈 L/H，单位 10/总行程系数/s</td>
+</tr>
+<tr>
+<td>7~8</td>
+<td>Axis1 电流反馈 L/H，单位 ‰，0~3000</td>
+</tr>
+<tr>
+<td>…</td>
+<td>Axis2 ~ Axis6 同上，至字节 38</td>
+</tr>
+<tr>
+<td>39~40</td>
+<td>Axis1 状态 L/H（Axis 状态格式，状态 H 为 0x00）</td>
+</tr>
+<tr>
+<td>41~42</td>
+<td>Axis1 错误码 L/H（小端序，错误码 &amp; 0x0FFF 得到具体错误码）</td>
+</tr>
+<tr>
+<td>…</td>
+<td>Axis2 ~ Axis6 同上，至字节 62</td>
+</tr>
+</tbody>
+</table>
+<p><strong>0xDC — 读取所有轴位置 + 速度 + 转矩 + 状态</strong></p>
+<p>布局同 0xDB，仅第 7~8 字节的电流反馈换为<strong>转矩</strong>反馈，单位 0.01 mN，带正负。</p>
+<h3 id="317">3.1.7 传感器读取</h3>
+<p><strong>DH116S — 0xF0 / 0x70 读取五指传感器信息</strong></p>
+<p>请求：字节1 = 0xF0，字节2 = 5（传感器数量）</p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0xF0 帧类型（0x70 | 0x80）</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>60 字节数</td>
+<td></td>
+</tr>
+<tr>
+<td>3~14</td>
+<td>大拇指指尖压力 12B</td>
+<td>每字节 0-255，代表对应点位压力 0-25.5N</td>
+</tr>
+<tr>
+<td>15~26</td>
+<td>食指指尖压力 12B</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>27~38</td>
+<td>中指指尖压力 12B</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>39~50</td>
+<td>无名指指尖压力 12B</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>51~62</td>
+<td>小拇指指尖压力 12B</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>DH116S — 0xF1 / 0x71 读取掌心传感器信息</strong></p>
+<p>请求：字节1 = 0xF1，字节2 = 1（传感器数量）
+返回：字节2 = 36（字节数），字节3~38 为掌心压力 36B（每字节 0-255，代表对应点位压力 0-25.5N）</p>
+<p><strong>DH116 — 0xF2 / 0x72 读取大拇指 + 食指传感器信息</strong></p>
+<p>请求：字节1 = 0xF2，字节2 = 2（传感器数量）；返回：字节2 = 60（字节数）</p>
+<p><strong>DH116 — 0xF3 / 0x73 读取中指 + 无名指传感器信息</strong></p>
+<p>请求：字节1 = 0xF3，字节2 = 2；返回：字节2 = 60</p>
+<p><strong>DH116 — 0xF4 / 0x74 读取小拇指 + 掌心传感器信息</strong></p>
+<p>请求：字节1 = 0xF4，字节2 = 2；返回：字节2 = 60</p>
+<p>以上三帧中，每根手指数据固定 <strong>30 字节</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>内容</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0~9</td>
+<td>通道数据 10B</td>
+<td>有效 5~9B，0-255/通道</td>
+</tr>
+<tr>
+<td>10~13</td>
+<td>法向力 4B</td>
+<td>有效 2~4B，0-655.35N，2B 一个法向力</td>
+</tr>
+<tr>
+<td>14~17</td>
+<td>切向力 4B</td>
+<td>有效 2~4B，0-655.35N，2B 一个切向力</td>
+</tr>
+<tr>
+<td>18~21</td>
+<td>切向力方向 4B</td>
+<td>0-360，2B 一个方向，65535 表示无方向数据</td>
+</tr>
+<tr>
+<td>22~23</td>
+<td>接近值 2B</td>
+<td>有效 1~2B，0-255 表示接近程度</td>
+</tr>
+<tr>
+<td>24~29</td>
+<td>保留 6B</td>
+<td>用于对齐（每指传感器数据总和均为 30B）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>各指的有效通道数不同：大拇指 5 通道；食指 / 中指 / 无名指 9 通道。
+0xF4 的掌心部分为 26 字节压力数据（0-25.5N），末尾保留 4 字节。</p>
+</blockquote>
+<h3 id="318-sdo">3.1.8 SDO 对象字典读写</h3>
+<p>SDO 的 COB-ID 为 0x600 + nodeID（请求）与 0x580 + nodeID（返回）。</p>
+<p><strong>读（0x40）</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x40 SDO 命令，读对象字典</td>
+</tr>
+<tr>
+<td>2</td>
+<td>索引低 8 位</td>
+</tr>
+<tr>
+<td>3</td>
+<td>索引高 8 位</td>
+</tr>
+<tr>
+<td>4</td>
+<td>子索引</td>
+</tr>
+</tbody>
+</table>
+<p>返回（0x4B，返回 16 位数据）：</p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x4B SDO 命令</td>
+</tr>
+<tr>
+<td>2~4</td>
+<td>索引低/高、子索引</td>
+</tr>
+<tr>
+<td>5</td>
+<td>数据 [7:0]</td>
+</tr>
+<tr>
+<td>6</td>
+<td>数据 [15:8]</td>
+</tr>
+<tr>
+<td>7</td>
+<td>数据 [23:16]</td>
+</tr>
+<tr>
+<td>8</td>
+<td>数据 [31:24]</td>
+</tr>
+</tbody>
+</table>
+<p><strong>写（0x2B）</strong></p>
+<table>
+<thead>
+<tr>
+<th>字节</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0x2B SDO 命令，写对象字典</td>
+</tr>
+<tr>
+<td>2</td>
+<td>索引低 8 位</td>
+</tr>
+<tr>
+<td>3</td>
+<td>索引高 8 位</td>
+</tr>
+<tr>
+<td>4</td>
+<td>子索引</td>
+</tr>
+<tr>
+<td>5 起</td>
+<td>数据</td>
+</tr>
+</tbody>
+</table>
+<p>返回：字节1 = 0x60（写入数据 OK）</p>
+<p><strong>主要对象字典</strong></p>
 <table>
 <thead>
 <tr>
 <th>Index</th>
-<th>Sub</th>
+<th>子索引</th>
 <th>读写</th>
-<th>含义/备注</th>
+<th>含义</th>
 </tr>
 </thead>
 <tbody>
@@ -964,13 +1705,13 @@
 <td>0x200E</td>
 <td>0x1D</td>
 <td>R</td>
-<td>驱动型号编码：LPDX ECAT = 1、LPDX CANFD = 2、LPDX RS = 6</td>
+<td>驱动型号编码</td>
 </tr>
 <tr>
 <td>0x200E</td>
 <td>0x1E</td>
 <td>R</td>
-<td>软件版本 16bit→十进制版本</td>
+<td>软件版本（16bit → 十进制）</td>
 </tr>
 <tr>
 <td>0x2030</td>
@@ -1000,37 +1741,133 @@
 <td>0x2030</td>
 <td>0x05</td>
 <td>R</td>
-<td>左右手：1=右手，2=左手</td>
+<td>灵巧手左右手：1 = 右手，2 = 左手</td>
 </tr>
 <tr>
-<td>0x2030…0x2170</td>
+<td>0x2030 / 0x2070 / 0x20B0 / 0x20F0 / 0x2130 / 0x2170</td>
 <td>0x06</td>
 <td>R</td>
 <td>S/N（组合可得）</td>
 </tr>
 <tr>
-<td>0x201D</td>
+<td>0x201D / 0x205D / 0x209D / 0x20DD / 0x211D / 0x215D</td>
 <td>0x11</td>
 <td>RW</td>
-<td>CAN 节点ID</td>
+<td>CAN 节点 ID</td>
 </tr>
 <tr>
-<td>0x201D</td>
+<td>0x201D / 0x205D / 0x209D / 0x20DD / 0x211D / 0x215D</td>
 <td>0x14</td>
 <td>RW</td>
-<td>CAN TPDO 通信周期（0.1ms 单位）</td>
+<td>CAN TPDO 通信周期（单位 0.1ms）</td>
+</tr>
+<tr>
+<td>0x2017 / 0x2057 / 0x2097 / 0x20D7 / 0x2117 / 0x2157</td>
+<td>0x01</td>
+<td>RW</td>
+<td>安全电流限制功能（1 = 使能，0 = 关闭）</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>每手指传感器/类型用 Index 不同：拇指 0x2030、食指 0x2070、中指 0x20B0、无名指 0x20F0、小拇指 0x2130、掌心 0x2170。CAN 节点ID/TPDO 需同时写 6 轴 Index：轴1 0x201D、轴2 0x205D、轴3 0x209D、轴4 0x20DD、轴5 0x211D、轴6 0x215D。保存 SDO 到 E2 下发 <code>2F 10 10 01 73 61 76 65</code>（COB‑ID 0x600+nodeID）。</p>
-</blockquote>
-<h3 id="317">3.1.7 常用示例指令</h3>
+<p><strong>驱动型号编码（0x200E : 0x1D）</strong></p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>型号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0x01</td>
+<td>DH116 ECAT</td>
+</tr>
+<tr>
+<td>0x02</td>
+<td>DH116 CANFD</td>
+</tr>
+<tr>
+<td>0x03</td>
+<td>DH116S CANFD</td>
+</tr>
+<tr>
+<td>0x04</td>
+<td>DH116S ECAT</td>
+</tr>
+<tr>
+<td>0x05</td>
+<td>DH116S RS</td>
+</tr>
+<tr>
+<td>0x06</td>
+<td>DH116 RS</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">每手指传感器/类型的 Index 不同</p>
 <ul>
-<li>使能所有轴：帧指令中功能码 0x01＝使能、0x02＝去使能、0x03＝清除报警；只需替换功能码。</li>
-<li>回零所有轴、控制所有轴运动：见 SDK 示例源码（集成后可补具体帧）。</li>
+<li>大拇指 0x2030、食指 0x2070、中指 0x20B0、无名指 0x20F0、小拇指 0x2130、掌心 0x2170。</li>
+<li>CAN 节点 ID、CAN TPDO 通信周期、安全电流限制功能<strong>写入时需同时写入 6 个 Index 的数据</strong>。</li>
+<li>保存所写入的 SDO 数据到 E2：下发 <code>2F 10 10 01 73 61 76 65</code>（COB-ID 0x600 + nodeID）。</li>
 </ul>
-<h3 id="318">3.1.8 手势定义</h3>
+</div>
+<h3 id="319">3.1.9 常用示例指令</h3>
+<p><strong>快速上手流程</strong></p>
+<p>最小可用流程（6 轴、nodeID = 1；默认推荐使用<strong>实时帧</strong> bit7 = 0，指令即发即执行、无返回帧；如需逐条确认可改用同步帧，命令内容相同）：</p>
+<ol>
+<li><strong>使能所有轴</strong>：发送帧 0x01，字节2 = 6，每轴填“模式 + 控制”：模式 0x20（位置+力矩混合控制）+ 控制 0x01（使能）</li>
+<li><strong>触发回零</strong>：发送帧 0x01，每轴模式改为 0x25（bit0~2 = 101 回零）+ 控制 0x04（触发回零），等待回零完成</li>
+<li><strong>回零完成，切回位置模式</strong>：发送帧 0x01，每轴模式改回 0x20 + 控制 0x00（无指令）</li>
+<li><strong>设置速度与电流</strong>：发送帧 0x03 设置每轴速度（每轴 2B，小端序）；发送帧 0x04 设置每轴电流上限</li>
+<li><strong>设置位置运动</strong>：发送帧 0x02 设置每轴位置，设备按设定速度运动到目标位置</li>
+</ol>
+<div class="highlight"><pre><span></span><code>使能所有轴 (实时帧 0x01, 6轴):              01 06 20 01 20 01 20 01 20 01 20 01 20 01
+回零所有轴 (实时帧 0x01, 6轴):              01 06 25 04 25 04 25 04 25 04 25 04 25 04
+回零完成切回位置模式 (实时帧 0x01, 6轴):    01 06 20 00 20 00 20 00 20 00 20 00 20 00
+设置运动速度 (实时帧 0x03, 6轴, 0x07D0):    03 06 D0 07 D0 07 D0 07 D0 07 D0 07 D0 07
+设置电流上限 (实时帧 0x04, 6轴, 0x03E8=1000‰): 04 06 E8 03 E8 03 E8 03 E8 03 E8 03 E8 03
+设置位置运动 (实时帧 0x02, 6轴, 0x03E8=行程10%): 02 06 E8 03 E8 03 E8 03 E8 03 E8 03 E8 03
+</code></pre></div>
+<p>其它常用指令：</p>
+<div class="highlight"><pre><span></span><code>去使能所有轴:  01 06 20 02 20 02 20 02 20 02 20 02 20 02
+清除报警:      01 06 20 03 20 03 20 03 20 03 20 03 20 03
+急停:          01 06 20 07 20 07 20 07 20 07 20 07 20 07
+撤销急停:      01 06 20 08 20 08 20 08 20 08 20 08 20 08
+</code></pre></div>
+<p>使能 / 去使能 / 清除报警，只需要将 0x01 改为对应功能码即可，如清除报警改为 0x03。</p>
+<div class="admonition note">
+<p class="admonition-title">停止轴运动的流程</p>
+<p>一般流程：急停 → 等待 5 ms → 撤销急停；或者等下一次需要运动之前再撤销急停，效果一致。</p>
+</div>
+<p><strong>单位换算</strong></p>
+<table>
+<thead>
+<tr>
+<th>量</th>
+<th>示例值</th>
+<th>换算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>速度</td>
+<td>0x07D0 (20000)</td>
+<td>20000 eq/s，即 0.5 s 运动完整个行程；单位 10/总行程系数/s</td>
+</tr>
+<tr>
+<td>电流</td>
+<td>0x03E8 (1000)</td>
+<td>1000‰，即 100% 额定电流；单位 ‰ 千分比</td>
+</tr>
+<tr>
+<td>位置</td>
+<td>0x03E8 (1000)</td>
+<td>整个行程的 10%；单位 行程，总行程系数 = 10000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="3110">3.1.10 手势定义</h3>
 <table>
 <thead>
 <tr>
@@ -1079,112 +1916,178 @@
 </tr>
 </tbody>
 </table>
-<h3 id="319">3.1.9 错误码定义</h3>
+<h3 id="3111">3.1.11 错误码定义</h3>
 <table>
 <thead>
 <tr>
 <th>错误码</th>
 <th>定义</th>
+<th>报警机制（故障原因）</th>
 <th>是否可清除</th>
-<th>说明</th>
+<th>当前触发阈值 (DH116S)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>0x00A0/0x00A1</td>
+<td>0x0000</td>
+<td>无错误</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x00A0 / 0x00A1</td>
 <td>电流检测回路错误</td>
+<td>相电流通道 1 零漂采样 512 次平均 AD 值 &gt; 1024</td>
 <td>否</td>
-<td>相电流通道零漂采样 AD&gt;1024</td>
+<td></td>
 </tr>
 <tr>
 <td>0x00C0</td>
 <td>直流母线电压过高</td>
+<td>母线电压超过过压阈值（P40.05 设定）</td>
 <td>是</td>
-<td>母线电压超过过压阈值</td>
+<td>55V（P40.05 过压阈值）</td>
 </tr>
 <tr>
 <td>0x00D0</td>
 <td>直流母线电压过低</td>
+<td>1. 母线电压低于欠压阈值（P40.04 设定）；2. 上电使能</td>
 <td>是</td>
-<td>欠压阈值/上电使能</td>
+<td>8V（P40.04 欠压阈值）</td>
 </tr>
 <tr>
 <td>0x00D2</td>
 <td>主电源断电</td>
+<td>断开主电源</td>
 <td>否</td>
 <td></td>
 </tr>
 <tr>
 <td>0x00E1</td>
 <td>驱动器过流</td>
+<td>检测到母线过流</td>
 <td>否</td>
-<td>检测到母线过流/绕组短路</td>
+<td>绕组短路</td>
 </tr>
 <tr>
 <td>0x00F0</td>
 <td>驱动器过温</td>
+<td>驱动器温度超过过温报警温度设置（P40.29 设定）</td>
 <td>否</td>
-<td>超过过温报警温度</td>
+<td>85℃（P40.29 过温报警温度设置）</td>
 </tr>
 <tr>
 <td>0x0100</td>
 <td>电机过载</td>
+<td>电机过载率超过 100%，与参数 P40.13 和 P40.14 有关</td>
 <td>是</td>
-<td>过载率&gt;100%</td>
+<td>10000ms（P40.13 两倍过载时间）/ 0（P40.14 过载等级）</td>
 </tr>
 <tr>
 <td>0x0102</td>
 <td>电机堵转</td>
+<td>1. 速度反馈小于 P40.17；2. 持续时间大于 P40.19</td>
 <td>是</td>
-<td>速度反馈低/持续超时</td>
+<td>60rpm（P40.17 堵转报警速度）/ 300ms（P40.19 堵转报警时间）</td>
 </tr>
 <tr>
 <td>0x0110</td>
 <td>拉零报警</td>
+<td>拉零等待完成时长超过拉零报警超时时间设定（P51.05 设定）</td>
 <td>是</td>
 <td></td>
 </tr>
 <tr>
-<td>0x0150/0x0151</td>
-<td>编码器断线 / 通信错误</td>
+<td>0x0150</td>
+<td>编码器断线</td>
+<td>1. 绝对值编码器通讯失败次数超过报警阈值（P40.06 设定）；2. ABZ 编码器硬件检测断线；3. 霍尔编码器检测到异常霍尔扇区</td>
 <td>否</td>
-<td>编码器通讯失败/CRC 校验错</td>
+<td>600（P40.06 编码器通信报警阈值）</td>
+</tr>
+<tr>
+<td>0x0151</td>
+<td>编码器通信错误</td>
+<td>编码器通信 CRC 校验错误超过报警阈值（P40.06 设定）</td>
+<td>否</td>
+<td>600（P40.06 编码器通信报警阈值）</td>
 </tr>
 <tr>
 <td>0x0160</td>
 <td>寻相错误</td>
+<td>微动寻相错误 / 开闭环电阻电感错误 / 电流环参数自整定错误</td>
 <td>是</td>
-<td></td>
+<td>寻相</td>
 </tr>
 <tr>
 <td>0x0180</td>
-<td>位置误差过大</td>
+<td>位置误差过大错误</td>
+<td>位置误差超过跟踪误差最大值（P40.03 设定）</td>
 <td>是</td>
-<td>默认关闭此报警</td>
+<td>已默认关闭位置误差报警</td>
+</tr>
+<tr>
+<td>0x0181</td>
+<td>速度误差过大错误</td>
+<td>不支持</td>
+<td>是</td>
+<td></td>
 </tr>
 <tr>
 <td>0x0190</td>
-<td>混合误差(振动)过大</td>
+<td>混合误差过大错误</td>
+<td>1. 混合误差（振动强度）超过振动报警阈值（P40.54 设定）；2. 使能情况下</td>
+<td>是</td>
+<td>2000（P40.54 振动报警阈值）</td>
+</tr>
+<tr>
+<td>0x01A0</td>
+<td>超速 1</td>
+<td>电机速度超过过速阈值（P40.21 设定）</td>
 <td>是</td>
 <td></td>
 </tr>
 <tr>
-<td>0x01A0/0x01A1</td>
-<td>超速 / 速度失控</td>
+<td>0x01A1</td>
+<td>电机速度失控</td>
+<td>电机飞车检测计数超过飞车报警检出时间（P40.67 设定）</td>
 <td>否</td>
 <td></td>
 </tr>
 <tr>
-<td>0x0211‑0x0213</td>
-<td>IO 端口/输出分配错误</td>
+<td>0x0211</td>
+<td>I/F 输入端口功能设定错误</td>
+<td>输入 IO 端口被设置成不支持的功能</td>
 <td>是</td>
 <td></td>
 </tr>
 <tr>
-<td>0x0240/0x0241</td>
-<td>EEPROM 参数/存储器错误</td>
+<td>0x0212</td>
+<td>I/F 输出端口功能设定错误</td>
+<td>输出 IO 端口被设置成不支持的功能</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0213</td>
+<td>输出端口分配错误</td>
+<td>输出 IO 端口被设置成不支持的功能</td>
+<td>是</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0240</td>
+<td>EEPROM 参数存储错误</td>
+<td>EEPROM 读取/保存厂商参数 CRC 校验错误</td>
 <td>否</td>
-<td>厂商参数/ IIC 接口错误</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0241</td>
+<td>EEPROM 存储器错误</td>
+<td>IIC 接口错误</td>
+<td>否</td>
+<td></td>
 </tr>
 </tbody>
 </table>
