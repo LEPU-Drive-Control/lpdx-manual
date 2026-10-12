@@ -940,34 +940,22 @@
 <td>≤ 31 轴</td>
 </tr>
 <tr>
-<td>0x70</td>
-<td>返回</td>
-<td>五指压力 12B×5</td>
-<td>DH116S</td>
-</tr>
-<tr>
-<td>0x71</td>
-<td>返回</td>
-<td>掌心压力 36B</td>
-<td>DH116S</td>
-</tr>
-<tr>
 <td>0x72</td>
 <td>返回</td>
 <td>大拇指 + 食指 30B×2</td>
-<td>DH116</td>
+<td>LPDX</td>
 </tr>
 <tr>
 <td>0x73</td>
 <td>返回</td>
 <td>中指 + 无名指 30B×2</td>
-<td>DH116</td>
+<td>LPDX</td>
 </tr>
 <tr>
 <td>0x74</td>
 <td>返回</td>
 <td>小拇指 + 掌心 30B×2</td>
-<td>DH116</td>
+<td>LPDX</td>
 </tr>
 <tr>
 <td>0xDA</td>
@@ -990,7 +978,7 @@
 </tbody>
 </table>
 <h3 id="314">3.1.4 控制方式：实时帧 与 同步帧</h3>
-<p>DH116(S) 提供两种控制方式，通过发送帧字节1（帧类型）的最高位 bit7（0x80）区分。</p>
+<p>LPDX 提供两种控制方式，通过发送帧字节1（帧类型）的最高位 bit7（0x80）区分。</p>
 <p><strong>实时帧（帧类型 bit7 = 0）</strong></p>
 <p>帧类型为各指令的基础值，如 0x01、0x02、0x0B 等。上位机下发指令后，设备<strong>仅执行指令、不立即返回</strong>该指令的反馈帧。需要周期获取设备数据（位置/速度/电流/状态/传感器）时，使用帧 0x00 配置实时返回帧，设备按配置的定时周期（1 ms）自动上报指定返回帧。</p>
 <p><strong>同步帧（帧类型 bit7 = 1）</strong></p>
@@ -1317,40 +1305,6 @@
 </tbody>
 </table>
 <h3 id="316">3.1.6 返回帧格式</h3>
-<div class="admonition warning">
-<p class="admonition-title">DH116 与 DH116S 的传感器返回帧不同，使用前请确认产品型号</p>
-<table>
-<thead>
-<tr>
-<th>对比项</th>
-<th>DH116</th>
-<th>DH116S</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>五指压力</td>
-<td>无独立帧，由 0xF2~0xF4 分组返回</td>
-<td>0xF0：五指各 12B 压力</td>
-</tr>
-<tr>
-<td>掌心压力</td>
-<td>0xF4 内返回掌心 26B</td>
-<td>0xF1：掌心 36B</td>
-</tr>
-<tr>
-<td>单指数据</td>
-<td>0xF2/0xF3/0xF4：每指 30B（通道/法向力/切向力/方向/接近值）</td>
-<td>0xF0：每指 12B 压力点数据</td>
-</tr>
-<tr>
-<td>传感器返回帧</td>
-<td>0x72 / 0x73 / 0x74</td>
-<td>0x70 / 0x71</td>
-</tr>
-</tbody>
-</table>
-</div>
 <p><strong>Axis 状态格式</strong></p>
 <table>
 <thead>
@@ -1491,62 +1445,11 @@
 <p><strong>0xDC — 读取所有轴位置 + 速度 + 转矩 + 状态</strong></p>
 <p>布局同 0xDB，仅第 7~8 字节的电流反馈换为<strong>转矩</strong>反馈，单位 0.01 mN，带正负。</p>
 <h3 id="317">3.1.7 传感器读取</h3>
-<p><strong>DH116S — 0xF0 / 0x70 读取五指传感器信息</strong></p>
-<p>请求：字节1 = 0xF0，字节2 = 5（传感器数量）</p>
-<table>
-<thead>
-<tr>
-<th>字节</th>
-<th>内容</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>0xF0 帧类型（0x70 | 0x80）</td>
-<td></td>
-</tr>
-<tr>
-<td>2</td>
-<td>60 字节数</td>
-<td></td>
-</tr>
-<tr>
-<td>3~14</td>
-<td>大拇指指尖压力 12B</td>
-<td>每字节 0-255，代表对应点位压力 0-25.5N</td>
-</tr>
-<tr>
-<td>15~26</td>
-<td>食指指尖压力 12B</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>27~38</td>
-<td>中指指尖压力 12B</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>39~50</td>
-<td>无名指指尖压力 12B</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>51~62</td>
-<td>小拇指指尖压力 12B</td>
-<td>同上</td>
-</tr>
-</tbody>
-</table>
-<p><strong>DH116S — 0xF1 / 0x71 读取掌心传感器信息</strong></p>
-<p>请求：字节1 = 0xF1，字节2 = 1（传感器数量）
-返回：字节2 = 36（字节数），字节3~38 为掌心压力 36B（每字节 0-255，代表对应点位压力 0-25.5N）</p>
-<p><strong>DH116 — 0xF2 / 0x72 读取大拇指 + 食指传感器信息</strong></p>
+<p><strong>LPDX — 0xF2 / 0x72 读取大拇指 + 食指传感器信息</strong></p>
 <p>请求：字节1 = 0xF2，字节2 = 2（传感器数量）；返回：字节2 = 60（字节数）</p>
-<p><strong>DH116 — 0xF3 / 0x73 读取中指 + 无名指传感器信息</strong></p>
+<p><strong>LPDX — 0xF3 / 0x73 读取中指 + 无名指传感器信息</strong></p>
 <p>请求：字节1 = 0xF3，字节2 = 2；返回：字节2 = 60</p>
-<p><strong>DH116 — 0xF4 / 0x74 读取小拇指 + 掌心传感器信息</strong></p>
+<p><strong>LPDX — 0xF4 / 0x74 读取小拇指 + 掌心传感器信息</strong></p>
 <p>请求：字节1 = 0xF4，字节2 = 2；返回：字节2 = 60</p>
 <p>以上三帧中，每根手指数据固定 <strong>30 字节</strong>：</p>
 <table>
@@ -1780,27 +1683,15 @@
 <tbody>
 <tr>
 <td>0x01</td>
-<td>DH116 ECAT</td>
+<td>LPDX ECAT</td>
 </tr>
 <tr>
 <td>0x02</td>
-<td>DH116 CANFD</td>
-</tr>
-<tr>
-<td>0x03</td>
-<td>DH116S CANFD</td>
-</tr>
-<tr>
-<td>0x04</td>
-<td>DH116S ECAT</td>
-</tr>
-<tr>
-<td>0x05</td>
-<td>DH116S RS</td>
+<td>LPDX CANFD</td>
 </tr>
 <tr>
 <td>0x06</td>
-<td>DH116 RS</td>
+<td>LPDX RS</td>
 </tr>
 </tbody>
 </table>
@@ -1924,7 +1815,7 @@
 <th>定义</th>
 <th>报警机制（故障原因）</th>
 <th>是否可清除</th>
-<th>当前触发阈值 (DH116S)</th>
+<th>当前触发阈值 (LPDX)</th>
 </tr>
 </thead>
 <tbody>
